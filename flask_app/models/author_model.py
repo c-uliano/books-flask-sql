@@ -68,13 +68,13 @@ class Author:
 
 
 # ? --------------------------------------
-    # READ one dojos, show on frontend
-    # @classmethod
-    # def get_one(cls, data):
-    #     query  = "SELECT * FROM dojos WHERE id = %(id)s;" 
-    #     result = connectToMySQL('dojos_and_ninjas_schema').query_db(query, data)
+    # READ one author, show on frontend
+    @classmethod
+    def get_one(cls, data):
+        query  = "SELECT * FROM authors WHERE id = %(id)s;" 
+        result = connectToMySQL('books_schema').query_db(query, data)
 
-    #     return cls(result[0]) 
+        return cls(result[0]) 
 # ? --------------------------------------
 
 

@@ -5,22 +5,34 @@ from flask_app.models import book_model, author_model
 
 
 # ? --------------------------------------
-# Add ninja form
-@app.route('/ninjas') 
-def ninja_form():
-    return render_template("create_ninja.html", dojos = dojo.Dojo.get_all())  
+# READ all books, display on frontend
+@app.route('/books') 
+def books():
+    return render_template("books.html", books = book_model.Book.get_all())  
 # ? --------------------------------------
 
 
 
 # ? --------------------------------------
-# CREATE new ninja, POST data
-@app.route('/create/ninja', methods=['POST']) 
-def create_ninja():
-    ninja.Ninja.save(request.form)
+# CREATE new book, POST data
+@app.route('/create/book', methods=['POST']) 
+def create_book():
+    book_model.Book.save(request.form)
 
-    
-    return redirect(f"/view/dojo/{request.form['dojo_id']}") 
+    # return redirect(f"/view/dojo/{request.form['dojo_id']}") 
+    return redirect("/books") 
+# ? --------------------------------------
+
+
+# ? --------------------------------------
+# READ one book, show on frontend
+@app.route('/view/book/<int:id>') 
+def view_book(id):
+    data = { 
+        "id": id 
+    }
+
+    return render_template("view_book.html", book = book_model.Book.get_one(data))  
 # ? --------------------------------------
 
 
@@ -28,50 +40,41 @@ def create_ninja():
 # ? --------------------------------------
 # Collectively this is to EDIT a dojo
 # READ one ninja, show on frontend in filled-out form
-@app.route('/update/ninja/<int:id>') 
-def update_ninja(id):   
-    data = { 
-        "id": id 
-    }
+# @app.route('/update/ninja/<int:id>') 
+# def update_ninja(id):   
+#     data = { 
+#         "id": id 
+#     }
 
-    return render_template("update_ninja.html", ninja = ninja.Ninja.get_one(data), dojos = dojo.Dojo.get_all())  
+#     return render_template("update_ninja.html", ninja = ninja.Ninja.get_one(data), dojos = dojo.Dojo.get_all())  
 
 # UPDATE ninja, collect form data
 # need hidden input on the form with the dojos id
-@app.route('/update/ninja', methods=['POST']) 
-def update_ninja_form():
-    ninja.Ninja.update_one(request.form)
+# @app.route('/update/ninja', methods=['POST']) 
+# def update_ninja_form():
+#     ninja.Ninja.update_one(request.form)
 
-    return redirect(f"/view/dojo/request.form['dojo_id']")  
+#     return redirect(f"/view/dojo/request.form['dojo_id']")  
 # ? --------------------------------------
 
 
 # ? --------------------------------------
 # DELETE ninja
-@app.route('/delete/ninja/<int:id>') 
-def delete_user(id):
+# @app.route('/delete/ninja/<int:id>') 
+# def delete_user(id):
 
-    data ={ 
-        "id": id
-    }
-
-    ninja.Ninja.remove_one(data)
-
-    return redirect("/")  
-# ? --------------------------------------
-
-
-
-# ? --------------------------------------
-# READ dojos, show on frontend
-# @app.route('/view/dojo/<int:id>') 
-# def view_user(id):
-#     data = { 
-#         "id": id 
+#     data ={ 
+#         "id": id
 #     }
 
-#     return render_template("show_dojo.html", user = dojo.Dojo.get_one(data))  
+#     ninja.Ninja.remove_one(data)
+
+#     return redirect("/")  
 # ? --------------------------------------
+
+
+
+
 
 
 

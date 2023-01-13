@@ -23,7 +23,7 @@ def all():
 # ? --------------------------------------
 # CREATE new author, POST data
 @app.route('/create/author', methods=['POST']) 
-def create():
+def create_author():
     author_model.Author.save(request.form)
 
     return redirect('/authors') 
@@ -32,14 +32,14 @@ def create():
 
 
 # ? --------------------------------------
-# READ one dojo, show on frontend
-# @app.route('/view/dojo/<int:id>') 
-# def view_dojo(id):
-#     data = { 
-#         "id": id 
-#     }
+# READ one author, show on frontend
+@app.route('/view/author/<int:id>') 
+def view_author(id):
+    data = { 
+        "id": id 
+    }
 
-#     return render_template("show_dojo.html", dojo = Dojo.get_dojo_with_ninjas(data))  
+    return render_template("view_author.html", author = author_model.Author.get_one(data))  
 # ? --------------------------------------
 
 
