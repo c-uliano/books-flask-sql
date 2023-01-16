@@ -6,6 +6,8 @@ class Book:
         self.id = data['id']
         self.title = data['title']
         self.num_of_pages = data['num_of_pages']
+        self.created_at = data['created_at']
+        self.updated_at = data['updated_at']
         # many to many: this empty list is added to each
         self.authors = []
 
@@ -41,20 +43,20 @@ class Book:
 
 # ? --------------------------------------
     # READ one book, show on frontend
-    @classmethod
-    def get_one(cls, data):
-        query  = "SELECT * FROM books WHERE id = %(id)s;" 
-        result = connectToMySQL('books_schema').query_db(query, data)
+    # @classmethod
+    # def get_one(cls, data):
+    #     query  = "SELECT * FROM books WHERE id = %(id)s;" 
+    #     result = connectToMySQL('books_schema').query_db(query, data)
 
-        return cls(result[0]) 
+    #     return cls(result[0]) 
 # ? --------------------------------------
 
 
 
 # ? --------------------------------------
-# ! I think the get_one() method used in the controller needs to be replaced with this one
+    # get a book by it's id
     @classmethod
-    def get_book_with_authors(cls, data):
+    def get_book_by_id(cls, data):
         query = """
         SELECT * FROM books 
         LEFT JOIN favorites ON favorites.book_id = books.id 
@@ -79,6 +81,31 @@ class Book:
             
         print(book)
         return book
+# ? --------------------------------------
+
+
+
+# ? --------------------------------------
+    # ! what is this doing? Getting a book that doesn't have an author id? NO CLUE WHAT'S HAPPENING HERE !!!!!!!!!!!!!!!!!!!!!
+    @classmethod
+    def get_books_not_favorited(cls, data):
+        # ! NO IDEA WHAT'S HAPPENING IN THIS QUERY
+        query = """
+        SELECT * FROM books 
+        WHERE books.id NOT IN 
+        ( SELECT favorites.book_id FROM favorites WHERE favorites.author_id = %(id)s );
+        """
+
+        results = connectToMySQL('books_schema').query_db(query, data)
+
+        books = []
+
+        # create a book object, add it to the books list on line 99 above
+        for row in results:
+            books.append(cls(row))
+
+        print(books)
+        return books
 # ? --------------------------------------
 
 

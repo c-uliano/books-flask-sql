@@ -24,15 +24,32 @@ def create_book():
 # ? --------------------------------------
 
 
+
 # ? --------------------------------------
-# READ one book, show on frontend
+# READ one book, show on frontend with associated authors
 @app.route('/view/book/<int:id>') 
 def view_book(id):
     data = { 
         "id": id 
     }
 
-    return render_template("view_book.html", book = book_model.Book.get_one(data))  
+    return render_template("view_book.html", book = book_model.Book.get_book_by_id(data), authors = author_model.Author.get_authors_not_favorited(data))  
+    # these are pulling the same id's, books, just from 2 different tables
+# ? --------------------------------------
+
+
+
+# ? --------------------------------------
+# CREATE, POST data
+@app.route('/create/book_fav', methods=['POST']) 
+def create_book_fav():
+    data = {
+        'author_id': request.form['author_id'],
+        'book_id': request.form['book_id']
+    }
+
+    author_model.Author.add_favorite(data)
+    return redirect(f"/view/book/{request.form['book_id']}") 
 # ? --------------------------------------
 
 

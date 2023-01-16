@@ -18,28 +18,37 @@
                         <table class="table table-all_users">
                             <thead>
                                 <tr class="table-dark">
-                                    <th scope="col" class="w-50">Book</th>
-                                    <th scope="col" class="text-center w-50">Actions</th>
+                                    <th scope="col" class="w-50">Authors</th>
+                                    <!-- <th scope="col" class="text-center w-50">Actions</th> -->
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td class="w-50"><!-- <a href="/view/author/{{ book.id }}">{{ book.name }}</a> --></td>
-                                    <td class="text-center w-50"><!--<a href="/update/dojo/{{ book.id }}">Edit</a>  | <a href="/delete/dojo/{{ book.id }}">Delete</a>--></td> 
+                                    <!-- ! need to get all the books and list them here. Iterate? Or is it just book.title?-->
+                                    {% for author in authors %}
+                                    <td>{{ author.name }}</td>
+                                    {% endfor %}
+                                    <!-- <td class="w-50"><a href="/view/author/{{ book.id }}">{{ book.name }}</a></td> -->
+                                    <!-- <td class="text-center w-50"><a href="/update/dojo/{{ book.id }}">Edit</a>  | <a href="/delete/dojo/{{ book.id }}">Delete</a></td> -->
                                 </tr>
                             </tbody>
                         </table>
                         <a href="/">Go Back</a>
                     </div>
                     <div class="col-md-6">
-                        <h2>Add to Favorites</h2>
-                        <form action="/create/author" method="post">
+                        <h2>Add Author to Favorites</h2>
+                        <!-- ! will need to access all the authors and iterate through them in a dropdown. book.authors -->
+                        <form action="/create/book_fav" method="post">
+                            <input type="hidden" name="book_id" value="{{book.id}}">
                             <div class="mb-3">
-                                <input type="text" placeholder="Author Name" class="form-control" id="author" name="author">
+                                <select class="form-select" name="dojo_id">
+                                    {% for author in authors %}
+                                    <option value="{{ author.id }}">{{ author.name }}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
                             <button type="submit" class="btn btn-primary">Add</button>
                         </form>
-                        <p><em>Author links don't work yet.</em></p>
                         <a href="/books" class="btn btn-secondary">Add Book</a>
                     </div>
                 </div>

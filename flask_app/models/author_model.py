@@ -44,12 +44,12 @@ class Author:
 
 # ? --------------------------------------
     # READ one author, show on frontend
-    @classmethod
-    def get_one(cls, data):
-        query  = "SELECT * FROM authors WHERE id = %(id)s;" 
-        result = connectToMySQL('books_schema').query_db(query, data)
+    # @classmethod
+    # def get_one(cls, data):
+    #     query  = "SELECT * FROM authors WHERE id = %(id)s;" 
+    #     result = connectToMySQL('books_schema').query_db(query, data)
 
-        return cls(result[0]) 
+    #     return cls(result[0]) 
 # ? --------------------------------------
 
 
@@ -57,7 +57,7 @@ class Author:
 # ? --------------------------------------
 # ! I think the get_one() method used in the controller needs to be replaced with this one
     @classmethod
-    def get_author_with_books(cls, data):
+    def get_author_by_id(cls, data):
         query = """
         SELECT * FROM authors 
         LEFT JOIN favorites ON favorites.author_id = authors.id
@@ -75,7 +75,7 @@ class Author:
             book_data = {
                 "id": row['books.id'],
                 "title": row['title'],
-                "num_of_pages": row['last_name'],
+                "num_of_pages": row['num_of_pages'],
                 "created_at": row['books.created_at'],
                 "updated_at": row['books.updated_at']
             }
@@ -83,6 +83,41 @@ class Author:
             
         print(author)
         return author
+# ? --------------------------------------
+
+
+
+# ? --------------------------------------
+    # ! what is this doing? Getting an author that doesn't have a book id? NO CLUE WHAT'S HAPPENING HERE !!!!!!!!!!!!!!!!!!!!!
+    @classmethod
+    def get_authors_not_favorited(cls, data):
+        # ! NO IDEA WHAT'S HAPPENING IN THIS QUERY
+        query = """
+        SELECT * FROM authors 
+        WHERE authors.id NOT IN 
+        ( SELECT favorites.author_id FROM favorites WHERE favorites.book_id = %(id)s );
+        """
+
+        results = connectToMySQL('books_schema').query_db(query, data)
+
+        authors = []
+
+        # create a book object, add it to the books list on line 99 above
+        for row in results:
+            authors.append(cls(row))
+
+        print(authors)
+        return authors
+# ? --------------------------------------
+
+
+
+# ? --------------------------------------
+    # ! Is this for a form on the view author page???? 
+    @classmethod
+    def add_favorite(cls, data):
+        query = "INSERT INTO favorites (author_id, book_id) VALUES (%(author_id)s, %(book_id)s);"
+        return connectToMySQL('books_schema').query_db(query, data);
 # ? --------------------------------------
 
 

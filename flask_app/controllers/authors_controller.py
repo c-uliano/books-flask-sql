@@ -1,6 +1,6 @@
 from flask_app import app
 from flask import render_template, redirect, request, session
-from flask_app.models import author_model
+from flask_app.models import author_model, book_model
 
 # ? --------------------------------------
 # Index page redirects to /dojos
@@ -39,7 +39,23 @@ def view_author(id):
         "id": id 
     }
 
-    return render_template("view_author.html", author = author_model.Author.get_one(data))  
+    # this needs to pull the same id's, authors, from 2 different tables
+    return render_template("view_author.html", author = author_model.Author.get_author_by_id(data), books = book_model.Book.get_books_not_favorited(data))  
+# ? --------------------------------------
+
+
+
+# ? --------------------------------------
+# CREATE, POST data
+@app.route('/create/author_fav', methods=['POST']) 
+def create_author_fav():
+    data = {
+        'author_id': request.form['author_id'],
+        'book_id': request.form['book_id']
+    }
+
+    author_model.Author.add_favorite(data)
+    return redirect(f"/view/book/{request.form['author_id']}") 
 # ? --------------------------------------
 
 
