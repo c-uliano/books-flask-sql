@@ -6,6 +6,8 @@ class Book:
         self.id = data['id']
         self.title = data['title']
         self.num_of_pages = data['num_of_pages']
+        # many to many: this empty list is added to each
+        self.authors = []
 
 
 
@@ -45,6 +47,38 @@ class Book:
         result = connectToMySQL('books_schema').query_db(query, data)
 
         return cls(result[0]) 
+# ? --------------------------------------
+
+
+
+# ? --------------------------------------
+# ! I think the get_one() method used in the controller needs to be replaced with this one
+    @classmethod
+    def get_book_with_authors(cls, data):
+        query = """
+        SELECT * FROM books 
+        LEFT JOIN favorites ON favorites.book_id = books.id 
+        LEFT JOIN authors ON favorites.author_id = authors.id
+        WHERE books.id = %(id)s;
+        """
+
+        results = connectToMySQL("books_schema").query_db(query, data)
+
+        book = cls(results[0])
+
+        for row in results:
+            # this is author data
+            # ! does it screw up the data param above if this is also called data? Change it here
+            author_data = {
+                "id": row['authors.id'],
+                "name": row['name'],
+                "created_at": row['authors.created_at'],
+                "updated_at": row['authors.updated_at']
+            }
+            book.authors.append(author_model.Author(author_data))
+            
+        print(book)
+        return book
 # ? --------------------------------------
 
 

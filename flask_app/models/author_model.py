@@ -9,6 +9,8 @@ class Author:
         self.name = data['name']
         self.created_at = data['created_at']
         self.updated_at = data['updated_at']
+        # many to many: this empty list is added to each
+        self.books = []
 
 
 
@@ -41,33 +43,6 @@ class Author:
 
 
 # ? --------------------------------------
-    # @classmethod
-    # def get_dojo_with_ninjas(cls, data):
-    #     query = "SELECT * FROM dojos LEFT JOIN ninjas ON dojos.id = ninjas.dojo_id WHERE dojos.id = %(id)s;"
-
-    #     results = connectToMySQL("dojos_and_ninjas_schema").query_db(query, data)
-
-    #     dojo = cls(results[0])
-        # ! what to do if there is no ninja added to a dojo, how to stop None and the action links from appearing on the frontend
-
-        # for row in results:
-        #     data = {
-        #         "id": row['ninjas.id'],
-        #         "first_name": row['first_name'],
-        #         "last_name": row['last_name'],
-        #         "age": row['age'],
-        #         "created_at": row['ninjas.created_at'],
-        #         "updated_at": row['ninjas.updated_at']
-        #     }
-        #     dojo.ninjas.append(ninja.Ninja(data))
-            
-        # print(dojo)
-        # return dojo
-# ? --------------------------------------
-
-
-
-# ? --------------------------------------
     # READ one author, show on frontend
     @classmethod
     def get_one(cls, data):
@@ -75,6 +50,39 @@ class Author:
         result = connectToMySQL('books_schema').query_db(query, data)
 
         return cls(result[0]) 
+# ? --------------------------------------
+
+
+
+# ? --------------------------------------
+# ! I think the get_one() method used in the controller needs to be replaced with this one
+    @classmethod
+    def get_author_with_books(cls, data):
+        query = """
+        SELECT * FROM authors 
+        LEFT JOIN favorites ON favorites.author_id = authors.id
+        LEFT JOIN books ON favorites.book_id = books.id 
+        WHERE authors.id = %(id)s;
+        """
+
+        results = connectToMySQL("books_schema").query_db(query, data)
+
+        author = cls(results[0])
+
+        for row in results:
+            # this is book data
+            # ! does it screw up the data param above if this is also called data? Change it here
+            book_data = {
+                "id": row['books.id'],
+                "title": row['title'],
+                "num_of_pages": row['last_name'],
+                "created_at": row['books.created_at'],
+                "updated_at": row['books.updated_at']
+            }
+            author.books.append(book_model.Book(book_data))
+            
+        print(author)
+        return author
 # ? --------------------------------------
 
 
